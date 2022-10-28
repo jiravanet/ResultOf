@@ -1,0 +1,29 @@
+name: publish to nuget.org
+
+on:
+    workflow_dispatch:
+    push:
+        branches:
+            - main # Default release branch
+        paths:
+            - "src/**"
+jobs:
+    publish:
+        name: build, pack & publish
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - name: Setup .NET
+              uses: actions/setup-dotnet@v3
+              with:
+                  dotnet-version: 6.0.*
+
+            - name: Restore dependencies
+              run: dotnet restore
+            # Publish
+            - name: Package ResultOf
+              run: dotnet pack -c Release src/ResultOf/ResultOf.csproj
+            - name: Package ResultOf.Validation
+              run: dotnet pack -c Release src/ResultOf.Validation/ResultOf.Validation.csproj
+            - name: Publish
+              run: dotnet nuget push ./src/output/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
