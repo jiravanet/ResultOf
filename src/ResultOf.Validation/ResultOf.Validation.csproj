@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <PackageId>ResultOf.Validation</PackageId>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="FluentValidation" Version="$(FluentValidation)" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ResultOf\ResultOf.csproj" />
+    </ItemGroup>
+
+</Project>
