@@ -8,7 +8,7 @@
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
 	
-	<Version>1.1.0</Version>
+	<Version>1.1.1</Version>
 	<Authors>Jarda Jirava</Authors>
 	<PackageTags>ResultOf,Result,Results</PackageTags>
 	<Description>An abstraction for the result values instead of propagation of the exceptions.</Description>
