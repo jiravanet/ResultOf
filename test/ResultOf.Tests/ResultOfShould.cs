@@ -2,7 +2,7 @@ namespace ResultOf.Tests;
 
 using FluentAssertions;
 
-public class UnitTest1
+public class ResultOfShould
 {
     [Fact]
     public void CreateSuccessFromValue()

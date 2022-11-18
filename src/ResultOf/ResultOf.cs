@@ -4,13 +4,13 @@ namespace ResultOf;
 public abstract record ResultOf<TValue> : IResultOf
 {
     [Id(3)]
-    protected readonly TValue? value = default;
+    protected TValue? value = default;
     [Id(4)]
     protected readonly List<Error> errors = new();
     [Id(5)]
     protected readonly List<ValidationError> validationErrors = new();
 
-    protected ResultOf(TValue value) 
+    protected ResultOf(TValue? value) 
     {
         this.value = value;
         ResultType = ResultType.Ok;
@@ -18,14 +18,23 @@ public abstract record ResultOf<TValue> : IResultOf
 
     protected ResultOf(ResultType resultType)
     {
-        ResultType = resultType;
+	    ResultType = resultType;
     }
+
     [Id(0)]
-    public TValue Value => value!;
+    public TValue? Value
+    {
+	    get => value; 
+	    set => this.value = value;
+    }
 
     [Id(1)]
-    public bool IsSuccess => ResultType == ResultType.Ok;
-	
+    public bool IsSuccess
+    {
+	    get => ResultType == ResultType.Ok;
+	    set => _ = value;
+    }
+
     [Id(2)]
     public ResultType ResultType { get; }
 
@@ -87,7 +96,7 @@ public abstract record ResultOf<TValue> : IResultOf
     {
 	    if (IsSuccess)
 	    {
-		    onSuccess(Value);
+		    onSuccess(Value!);
 		    return;
 	    }
 	    onError(Errors.First());
@@ -97,7 +106,7 @@ public abstract record ResultOf<TValue> : IResultOf
     {
 	    if (IsSuccess)
 	    {
-		    onSuccess(Value);
+		    onSuccess(Value!);
 		    return;
 	    }
 	    onError(Errors);
@@ -107,7 +116,7 @@ public abstract record ResultOf<TValue> : IResultOf
     {
 	    if (IsSuccess)
 	    {
-		    onSuccess(Value);
+		    onSuccess(Value!);
 		    return;
 	    }
 	    onError(ValidationErrors.First());
@@ -117,7 +126,7 @@ public abstract record ResultOf<TValue> : IResultOf
     {
 	    if (IsSuccess)
 	    {
-		    onSuccess(Value);
+		    onSuccess(Value!);
 		    return;
 	    }
 	    onError(ValidationErrors);
@@ -126,28 +135,28 @@ public abstract record ResultOf<TValue> : IResultOf
     public TResult MatchFirst<TResult>(Func<TValue, TResult> onSuccess, Func<Error, TResult> onError)
     {
 	    return IsSuccess 
-		    ? onSuccess(Value) 
+		    ? onSuccess(Value!) 
 		    : onError(Errors.First());
     }
     
     public TResult Match<TResult>(Func<TValue, TResult> onSuccess, Func<IEnumerable<Error>, TResult> onError)
     {
 	    return IsSuccess 
-		    ? onSuccess(Value) 
+		    ? onSuccess(Value!) 
 		    : onError(Errors);
     }
     
     public TResult MatchFirstValidation<TResult>(Func<TValue, TResult> onSuccess, Func<ValidationError, TResult> onError)
     {
 	    return IsSuccess 
-		    ? onSuccess(Value) 
+		    ? onSuccess(Value!) 
 		    : onError(ValidationErrors.First());
     }
     
     public TResult MatchValidation<TResult>(Func<TValue, TResult> onSuccess, Func<IEnumerable<ValidationError>, TResult> onError)
     {
 	    return IsSuccess 
-		    ? onSuccess(Value) 
+		    ? onSuccess(Value!) 
 		    : onError(ValidationErrors);
     }
 }
