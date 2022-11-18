@@ -3,8 +3,11 @@ namespace ResultOf;
 [GenerateSerializer]
 public abstract record ResultOf<TValue> : IResultOf
 {
+    [Id(3)]
     protected readonly TValue? value = default;
+    [Id(4)]
     protected readonly List<Error> errors = new();
+    [Id(5)]
     protected readonly List<ValidationError> validationErrors = new();
 
     protected ResultOf(TValue value) 
@@ -17,11 +20,13 @@ public abstract record ResultOf<TValue> : IResultOf
     {
         ResultType = resultType;
     }
-    
+    [Id(0)]
     public TValue Value => value!;
 
+    [Id(1)]
     public bool IsSuccess => ResultType == ResultType.Ok;
 	
+    [Id(2)]
     public ResultType ResultType { get; }
 
     public static readonly Error NoError = Error.Custom("ResultOf.NoErrors", "No error");
