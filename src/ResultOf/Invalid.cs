@@ -1,5 +1,6 @@
 namespace ResultOf;
 
+[GenerateSerializer]
 public record Invalid<TValue> : ResultOf<TValue>
 {
 	public Invalid(ValidationError validationError) : base(ResultType.Error)

@@ -1,5 +1,6 @@
 ﻿namespace ResultOf;
 
+[GenerateSerializer]
 public record NotFound<TValue> : ResultOf<TValue>
 {
     public NotFound() : base(ResultType.Error)

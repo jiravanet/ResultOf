@@ -1,5 +1,6 @@
 ﻿namespace ResultOf;
 
+[GenerateSerializer]
 public record Unauthorized<TValue> : ResultOf<TValue>
 {
     public Unauthorized()  : base(ResultType.Error)

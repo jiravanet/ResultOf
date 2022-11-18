@@ -218,4 +218,9 @@ public class UnitTest1
     {
         return new SuccessOf<T>(value);
     }
+
+    static ResultOf<T> ReturnNull<T>()
+    {
+        return null!;
+    }
 }

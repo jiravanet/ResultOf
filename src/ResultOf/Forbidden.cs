@@ -1,5 +1,6 @@
 ﻿namespace ResultOf;
 
+[GenerateSerializer]
 public record Forbidden<TValue> : ResultOf<TValue>
 {
     public Forbidden()  : base(ResultType.Error)

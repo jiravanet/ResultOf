@@ -1,5 +1,6 @@
 ﻿namespace ResultOf;
 
+[GenerateSerializer]
 public record Fault<TValue> : ResultOf<TValue>
 {
     public Fault(Error error) : base(ResultType.Error)

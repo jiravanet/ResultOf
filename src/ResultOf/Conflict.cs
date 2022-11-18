@@ -1,5 +1,6 @@
 ﻿namespace ResultOf;
 
+[GenerateSerializer]
 public record Conflict<TValue> : ResultOf<TValue>
 {
     public Conflict() : base(ResultType.Error)

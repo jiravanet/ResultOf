@@ -1,5 +1,6 @@
 namespace ResultOf;
 
+[GenerateSerializer]
 public readonly record struct Error(string Code, string Description, int ErrorCode)
 {
 	public static Error NotFound(string code = "General.NotFound", string description = "Not found") =>

@@ -1,5 +1,6 @@
 namespace ResultOf;
 
+[GenerateSerializer]
 public abstract record ResultOf<TValue> : IResultOf
 {
     protected readonly TValue? value = default;
