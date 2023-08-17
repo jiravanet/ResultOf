@@ -8,7 +8,7 @@
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
 	
-	<Version>1.1.1</Version>
+	<Version>2.0.0</Version>
 	<Authors>Jarda Jirava</Authors>
 	<PackageTags>ResultOf,Result,Results</PackageTags>
 	<Description>An abstraction for the result values instead of propagation of the exceptions.</Description>
@@ -27,6 +27,5 @@
 	<xunit>2.4.2</xunit>
 	<xunit_runner>2.4.5</xunit_runner>
 	<coverlet>3.2.0</coverlet>
-	<Orleans>7.0.0</Orleans>
   </PropertyGroup>
 </Project>

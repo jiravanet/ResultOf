@@ -4,138 +4,106 @@ using FluentAssertions;
 
 public class ResultOfShould
 {
-    [Fact]
-    public void CreateSuccessFromValue()
-    {
-        var result = ReturnSuccess("value");
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Should().Be("value");
-        result.Should().BeOfType<SuccessOf<string>>();
-    }
 
     [Fact]
-    public void CreateSuccessFromImplicitCast()
+    public void CreateSuccess()
     {
-        ResultOf<string> result = "value";
+        ResultOf result = ResultOf.Success("value");
         
         result.IsSuccess.Should().BeTrue();
-        result.Value.Should().Be("value");
         result.Should().BeOfType<SuccessOf<string>>();
-    }
-    
-    [Fact]
-    public void CreateFromSuccessValue_ErrorsReturnNoError()
-    {
-        var result = ReturnSuccess("value");
-        result.Errors.Should().ContainSingle().Which.Should().Be(ResultOf<string>.NoError);
-    }
-    
-    [Fact]
-    public void CreateFromSuccessValue_ValidationErrorsReturnNoValidationError()
-    {
-        var result = ReturnSuccess("value");
-        result.ValidationErrors.Should().ContainSingle().Which.Should().Be(ResultOf<string>.NoValidationError);
+        result.As<SuccessOf<string>>().Value.Should().Be("value");
     }
     
 
     [Fact]
     public void CreateNotFound()
     {
-        var result = ResultOf<string>.NotFound();
+        var result = ResultOf.NotFound();
 
         result.IsSuccess.Should().BeFalse();
-        result.Should().BeOfType<NotFound<string>>();
-        result.Value.Should().Be(default);
+        result.Should().BeOfType<NotFound>();
     }
     
     [Fact]
     public void CreateNotFoundOwnError()
     {
         var error = Error.Custom("custom", "custom");
-        var result = ResultOf<string>.NotFound(error);
+        var result = ResultOf.NotFound(error);
 
         result.IsSuccess.Should().BeFalse();
-        result.Should().BeOfType<NotFound<string>>();
-        result.Value.Should().Be(default);
-        result.Errors.Should().ContainSingle().Which.Should().Be(error);
+        result.Should().BeOfType<NotFound>();
+        result.As<NotFound>().Errors.Should().ContainSingle().Which.Should().Be(error);
     }
     
     [Fact]
     public void CreateConflict()
     {
-        var result = ResultOf<string>.Conflict();
+        var result = ResultOf.Conflict();
 
         result.IsSuccess.Should().BeFalse();
-        result.Should().BeOfType<Conflict<string>>();
-        result.Value.Should().Be(default);
+        result.Should().BeOfType<Conflict>();
     }
     
     [Fact]
     public void CreateConflictOwnError()
     {
         var error = Error.Custom("custom", "custom");
-        var result = ResultOf<string>.Conflict(error);
+        var result = ResultOf.Conflict(error);
 
         result.IsSuccess.Should().BeFalse();
-        result.Should().BeOfType<Conflict<string>>();
-        result.Value.Should().Be(default);
-        result.Errors.Should().ContainSingle().Which.Should().Be(error);
+        result.Should().BeOfType<Conflict>();
+        result.As<Conflict>().Errors.Should().ContainSingle().Which.Should().Be(error);
     }
     
     [Fact]
     public void CreateForbidden()
     {
-        var result = ResultOf<string>.Forbidden();
+        var result = ResultOf.Forbidden();
 
         result.IsSuccess.Should().BeFalse();
-        result.Should().BeOfType<Forbidden<string>>();
-        result.Value.Should().Be(default);
+        result.Should().BeOfType<Forbidden>();
     }
     
     [Fact]
     public void CreateForbiddenOwnError()
     {
         var error = Error.Custom("custom", "custom");
-        var result = ResultOf<string>.Forbidden(error);
+        var result = ResultOf.Forbidden(error);
 
         result.IsSuccess.Should().BeFalse();
-        result.Should().BeOfType<Forbidden<string>>();
-        result.Value.Should().Be(default);
-        result.Errors.Should().ContainSingle().Which.Should().Be(error);
+        result.Should().BeOfType<Forbidden>();
+        result.As<Forbidden>().Errors.Should().ContainSingle().Which.Should().Be(error);
     }
     
     [Fact]
     public void CreateUnauthorized()
     {
-        var result = ResultOf<string>.Unauthorized();
+        var result = ResultOf.Unauthorized();
 
         result.IsSuccess.Should().BeFalse();
-        result.Should().BeOfType<Unauthorized<string>>();
-        result.Value.Should().Be(default);
+        result.Should().BeOfType<Unauthorized>();
     }
     
     [Fact]
     public void CreateUnauthorizedOwnError()
     {
         var error = Error.Custom("custom", "custom");
-        var result = ResultOf<string>.Unauthorized(error);
+        var result = ResultOf.Unauthorized(error);
 
         result.IsSuccess.Should().BeFalse();
-        result.Should().BeOfType<Unauthorized<string>>();
-        result.Value.Should().Be(default);
-        result.Errors.Should().ContainSingle().Which.Should().Be(error);
+        result.Should().BeOfType<Unauthorized>();
+        result.As<Unauthorized>().Errors.Should().ContainSingle().Which.Should().Be(error);
     }
     
     [Fact]
     public void CreateFault()
     {
-        var result = ResultOf<string>.Fault(Error.Fault());
+        var result = ResultOf.Fault(Error.Fault());
 
         result.IsSuccess.Should().BeFalse();
-        result.Should().BeOfType<Fault<string>>();
-        result.Errors.Should().ContainSingle().Which.Should().Be(Error.Fault());
-        
-        result.Value.Should().Be(default);
+        result.Should().BeOfType<Fault>();
+        result.As<Fault>().Errors.Should().ContainSingle().Which.Should().Be(Error.Fault());
     }
     
     [Fact]
@@ -146,13 +114,12 @@ public class ResultOfShould
             Error.Fault(),
             Error.Fault()
         };
-        var result = ResultOf<string>.Fault(expected);
+        var result = ResultOf.Fault(expected);
 
         result.IsSuccess.Should().BeFalse();
-        result.Should().BeOfType<Fault<string>>();
-        result.Errors.Should().AllBeAssignableTo<Error>();
-        result.Errors.Should().HaveCount(expected.Count);
-        result.Value.Should().Be(default);
+        result.Should().BeOfType<Fault>();
+        result.As<Fault>().Errors.Should().AllBeAssignableTo<Error>();
+        result.As<Fault>().Errors.Should().HaveCount(expected.Count);
     }
     
     [Fact]
@@ -164,36 +131,32 @@ public class ResultOfShould
             Error.Conflict(description: "Another conflict")
         };
 
-        ResultOf<string> result = errors;
+        ResultOf result = errors;
         result.IsSuccess.Should().BeFalse();
-        result.Value.Should().Be(default);
-        result.Should().BeOfType<Fault<string>>();
-        result.Errors.Should().ContainItemsAssignableTo<Error>();
+        result.Should().BeOfType<Fault>();
+        result.As<Fault>().Errors.Should().ContainItemsAssignableTo<Error>();
     }
     
     [Fact]
     public void CreateErrorFromImplicitCast()
     {
         var expected = Error.Custom("code", "description");
-        ResultOf<string> result = expected;
+        ResultOf result = expected;
         
         result.IsSuccess.Should().BeFalse();
-        result.Value.Should().Be(default);
-        result.Should().BeOfType<Fault<string>>();
-        result.Errors.Should().ContainSingle().Which.Should().Be(expected);
+        result.Should().BeOfType<Fault>();
+        result.As<Fault>().Errors.Should().ContainSingle().Which.Should().Be(expected);
     }
 
     [Fact]
     public void CreateInvalid()
     {
         var validation = new ValidationError("A", "Code", "Description", ValidationSeverity.Error);
-        var result = ResultOf<string>.Invalid(validation);
+        var result = ResultOf.Invalid(validation);
 
         result.IsSuccess.Should().BeFalse();
-        result.Should().BeOfType<Invalid<string>>();
-        result.ValidationErrors.Should().ContainSingle().Which.Should().Be(validation);
-        
-        result.Value.Should().Be(default);
+        result.Should().BeOfType<Invalid>();
+        result.As<Invalid>().ValidationErrors.Should().ContainSingle().Which.Should().Be(validation);
     }
 
     [Fact]
@@ -204,22 +167,20 @@ public class ResultOfShould
             new("A", "Code", "Description", ValidationSeverity.Error),
             new("B", "Code", "Description", ValidationSeverity.Error),
         };
-        var result = ResultOf<string>.Invalid(expected);
+        var result = ResultOf.Invalid(expected);
 
         result.IsSuccess.Should().BeFalse();
-        result.Should().BeOfType<Invalid<string>>();
-        result.ValidationErrors.Should().ContainItemsAssignableTo<ValidationError>();
-        result.ValidationErrors.Should().HaveCount(expected.Count);
-        
-        result.Value.Should().Be(default);
+        result.Should().BeOfType<Invalid>();
+        result.As<Invalid>().ValidationErrors.Should().ContainItemsAssignableTo<ValidationError>();
+        result.As<Invalid>().ValidationErrors.Should().HaveCount(expected.Count);
     }
 
-    static ResultOf<T> ReturnSuccess<T>(T value) 
+    static ResultOf ReturnSuccess<T>(T value) 
     {
         return new SuccessOf<T>(value);
     }
 
-    static ResultOf<T> ReturnNull<T>()
+    static ResultOf ReturnNull<T>()
     {
         return null!;
     }

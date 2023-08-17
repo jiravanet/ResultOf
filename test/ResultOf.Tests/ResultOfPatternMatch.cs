@@ -8,7 +8,7 @@ public class ResultOfPatternMatchShould
     [Fact]
     public void MatchSuccess()
     {
-        ResultOf<Todo> result = ResultOf<Todo>.Success(new Todo("value"));
+        ResultOf result = ResultOf.Success(new Todo("value"));
 
         var action = () =>
         {
@@ -28,13 +28,13 @@ public class ResultOfPatternMatchShould
     [Fact]
     public void MatchConflict()
     {
-        ResultOf<Todo> result = ResultOf<Todo>.Conflict();
+        ResultOf result = ResultOf.Conflict();
 
         var action = () =>
         {
             switch (result)
             {
-                case Conflict<Todo> c:
+                case Conflict c:
                     c.Should().Be(result);
                     return;
                 default:
@@ -48,13 +48,13 @@ public class ResultOfPatternMatchShould
     [Fact]
     public void MatchFault()
     {
-        ResultOf<Todo> result = ResultOf<Todo>.Fault(Error.Fault());
+        ResultOf result = ResultOf.Fault(Error.Fault());
 
         var action = () =>
         {
             switch (result)
             {
-                case Fault<Todo> c:
+                case Fault c:
                     c.Should().Be(result);
                     return;
                 default:
@@ -68,13 +68,13 @@ public class ResultOfPatternMatchShould
     [Fact]
     public void MatchForbidden()
     {
-        ResultOf<Todo> result = ResultOf<Todo>.Forbidden();
+        ResultOf result = ResultOf.Forbidden();
 
         var action = () =>
         {
             switch (result)
             {
-                case Forbidden<Todo> c:
+                case Forbidden c:
                     c.Should().Be(result);
                     return;
                 default:
@@ -88,14 +88,14 @@ public class ResultOfPatternMatchShould
     [Fact]
     public void MatchInvalid()
     {
-        ResultOf<Todo> result =
-            ResultOf<Todo>.Invalid(new ValidationError("Ident", "Code", "Description", ValidationSeverity.Info));
+        ResultOf result =
+            ResultOf.Invalid(new ValidationError("Ident", "Code", "Description", ValidationSeverity.Info));
 
         var action = () =>
         {
             switch (result)
             {
-                case Invalid<Todo> c:
+                case Invalid c:
                     c.Should().Be(result);
                     return;
                 default:
@@ -110,13 +110,13 @@ public class ResultOfPatternMatchShould
     [Fact]
     public void MatchNotFound()
     {
-        ResultOf<Todo> result = ResultOf<Todo>.NotFound();
+        ResultOf result = ResultOf.NotFound();
 
         var action = () =>
         {
             switch (result)
             {
-                case NotFound<Todo> c:
+                case NotFound c:
                     c.Should().Be(result);
                     return;
                 default:
@@ -131,13 +131,13 @@ public class ResultOfPatternMatchShould
     [Fact]
     public void MatchUnauthorized()
     {
-        ResultOf<Todo> result = ResultOf<Todo>.Unauthorized();
+        ResultOf result = ResultOf.Unauthorized();
 
         var action = () =>
         {
             switch (result)
             {
-                case Unauthorized<Todo> c:
+                case Unauthorized c:
                     c.Should().Be(result);
                     return;
                 default:

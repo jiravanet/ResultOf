@@ -1,18 +1,9 @@
 namespace ResultOf;
 
-[GenerateSerializer]
-public abstract record ResultOf<TValue> : IResultOf
+public abstract record ResultOf : IResultOf
 {
-    [Id(3)]
-    protected TValue? value = default;
-    [Id(4)]
-    protected readonly List<Error> errors = new();
-    [Id(5)]
-    protected readonly List<ValidationError> validationErrors = new();
-
-    protected ResultOf(TValue? value) 
+    protected ResultOf() 
     {
-        this.value = value;
         ResultType = ResultType.Ok;
     }
 
@@ -21,142 +12,139 @@ public abstract record ResultOf<TValue> : IResultOf
 	    ResultType = resultType;
     }
 
-    [Id(0)]
-    public TValue? Value
-    {
-	    get => value; 
-	    set => this.value = value;
-    }
-
-    [Id(1)]
     public bool IsSuccess
     {
 	    get => ResultType == ResultType.Ok;
 	    set => _ = value;
     }
 
-    [Id(2)]
     public ResultType ResultType { get; }
 
-    public static readonly Error NoError = Error.Custom("ResultOf.NoErrors", "No error");
     
-    static readonly Error[] NoErrors = { NoError };
+	
+    public static implicit operator ResultOf(Error error) => new Fault(error);
+	
+    public static implicit operator ResultOf(List<Error> errors) => new Fault(errors);
+	
+    public static implicit operator ResultOf(ValidationError error) => new Invalid(error);
+	
+    public static implicit operator ResultOf(List<ValidationError> errors) => new Invalid(errors);
 
-    public static readonly ValidationError NoValidationError = new("ResultOf.NoValidationErrors", "NoValidationErrors",
-	    "No validation errors",
-	    ValidationSeverity.Info);
+    public static ResultOf Success<TResult>(TResult value) => new SuccessOf<TResult>(value);
+	
+    public static ResultOf NotFound() => new NotFound();
+    public static ResultOf NotFound(Error error) => new NotFound(error);
+	
+    public static ResultOf Conflict() => new Conflict();
+    public static ResultOf Conflict(Error error) => new Conflict(error);
+	
+    public static ResultOf Forbidden() => new Forbidden();
+    public static ResultOf Forbidden(Error error) => new Forbidden(error);
+	
+    public static ResultOf Unauthorized() => new Unauthorized();
+    public static ResultOf Unauthorized(Error error) => new Unauthorized(error);
+	
+    public static ResultOf Fault(Error error) => new Fault(error);
+	
+    public static ResultOf Fault(IEnumerable<Error> errors) => new Fault(errors);
+	
+    public static ResultOf Invalid(ValidationError error) => new Invalid(error);
+	
+    public static ResultOf Invalid(IEnumerable<ValidationError> errors) => new Invalid(errors);
     
-    static readonly ValidationError[] NoValidationErrors =
-    {
-	    NoValidationError
-    };
-
-    public IEnumerable<Error> Errors => errors.Count > 0 
-        ? errors.AsReadOnly() 
-        : NoErrors;
-
-    public IEnumerable<ValidationError> ValidationErrors => validationErrors.Count > 0 
-	    ? validationErrors.AsReadOnly() 
-        : NoValidationErrors;
-
-    public static implicit operator ResultOf<TValue>(TValue value) => new SuccessOf<TValue>(value);
-	
-    public static implicit operator ResultOf<TValue>(Error error) => new Fault<TValue>(error);
-	
-    public static implicit operator ResultOf<TValue>(List<Error> errors) => new Fault<TValue>(errors);
-	
-    public static implicit operator ResultOf<TValue>(ValidationError error) => new Invalid<TValue>(error);
-	
-    public static implicit operator ResultOf<TValue>(List<ValidationError> errors) => new Invalid<TValue>(errors);
-
-    public static ResultOf<TValue> Success(TValue value) => new SuccessOf<TValue>(value);
-	
-    public static ResultOf<TValue> NotFound() => new NotFound<TValue>();
-    public static ResultOf<TValue> NotFound(Error error) => new NotFound<TValue>(error);
-	
-    public static ResultOf<TValue> Conflict() => new Conflict<TValue>();
-    public static ResultOf<TValue> Conflict(Error error) => new Conflict<TValue>(error);
-	
-    public static ResultOf<TValue> Forbidden() => new Forbidden<TValue>();
-    public static ResultOf<TValue> Forbidden(Error error) => new Forbidden<TValue>(error);
-	
-    public static ResultOf<TValue> Unauthorized() => new Unauthorized<TValue>();
-    public static ResultOf<TValue> Unauthorized(Error error) => new Unauthorized<TValue>(error);
-	
-    public static ResultOf<TValue> Fault(Error error) => new Fault<TValue>(error);
-	
-    public static ResultOf<TValue> Fault(IEnumerable<Error> errors) => new Fault<TValue>(errors);
-	
-    public static ResultOf<TValue> Invalid(ValidationError error) => new Invalid<TValue>(error);
-	
-    public static ResultOf<TValue> Invalid(IEnumerable<ValidationError> errors) => new Invalid<TValue>(errors);
-
-
-    public void SwitchFirst(Action<TValue> onSuccess, Action<Error> onError)
-    {
-	    if (IsSuccess)
-	    {
-		    onSuccess(Value!);
-		    return;
-	    }
-	    onError(Errors.First());
-    }
-    
-    public void Switch(Action<TValue> onSuccess, Action<IEnumerable<Error>> onError)
-    {
-	    if (IsSuccess)
-	    {
-		    onSuccess(Value!);
-		    return;
-	    }
-	    onError(Errors);
-    }
-    
-    public void SwitchFirstValidation(Action<TValue> onSuccess, Action<ValidationError> onError)
-    {
-	    if (IsSuccess)
-	    {
-		    onSuccess(Value!);
-		    return;
-	    }
-	    onError(ValidationErrors.First());
-    }
-    
-    public void SwitchValidation(Action<TValue> onSuccess, Action<IEnumerable<ValidationError>> onError)
-    {
-	    if (IsSuccess)
-	    {
-		    onSuccess(Value!);
-		    return;
-	    }
-	    onError(ValidationErrors);
-    }
-    
-    public TResult MatchFirst<TResult>(Func<TValue, TResult> onSuccess, Func<Error, TResult> onError)
-    {
-	    return IsSuccess 
-		    ? onSuccess(Value!) 
-		    : onError(Errors.First());
-    }
-    
-    public TResult Match<TResult>(Func<TValue, TResult> onSuccess, Func<IEnumerable<Error>, TResult> onError)
-    {
-	    return IsSuccess 
-		    ? onSuccess(Value!) 
-		    : onError(Errors);
-    }
-    
-    public TResult MatchFirstValidation<TResult>(Func<TValue, TResult> onSuccess, Func<ValidationError, TResult> onError)
-    {
-	    return IsSuccess 
-		    ? onSuccess(Value!) 
-		    : onError(ValidationErrors.First());
-    }
-    
-    public TResult MatchValidation<TResult>(Func<TValue, TResult> onSuccess, Func<IEnumerable<ValidationError>, TResult> onError)
-    {
-	    return IsSuccess 
-		    ? onSuccess(Value!) 
-		    : onError(ValidationErrors);
-    }
 }
+
+public static class ResultOfExtensions
+{
+	    public static void SwitchFirst<TResult>(this ResultOf resultOf, Action<TResult> onSuccess, Action<Error> onError)
+        {
+	        switch (resultOf)
+	        {
+			     case SuccessOf<TResult> successOf:
+			        onSuccess(successOf.Value!);
+			        break;
+                case ErrorOf errorOf:
+					onError(errorOf.Errors.First());
+			        break;
+	        }
+        }
+        
+        public static void Switch<TResult>(this ResultOf resultOf, Action<TResult> onSuccess, Action<IEnumerable<Error>> onError)
+        {
+	        switch (resultOf)
+	        {
+		        case SuccessOf<TResult> successOf:
+			        onSuccess(successOf.Value!);
+			        break;
+		        case ErrorOf errorOf:
+			        onError(errorOf.Errors);
+			        break;
+	        }
+        }
+        
+        public static void SwitchFirstValidation<TResult>(this ResultOf resultOf, Action<TResult> onSuccess, Action<ValidationError> onError)
+        {
+	        switch (resultOf)
+	        {
+		        case SuccessOf<TResult> successOf:
+			        onSuccess(successOf.Value!);
+			        break;
+		        case Invalid invalid:
+			        onError(invalid.ValidationErrors.First());
+			        break;
+	        }
+        }
+        
+        public static void SwitchValidation<TResult>(this ResultOf resultOf, Action<TResult> onSuccess, Action<IEnumerable<ValidationError>> onError)
+        {
+	        switch (resultOf)
+	        {
+		        case SuccessOf<TResult> successOf:
+			        onSuccess(successOf.Value!);
+			        break;
+		        case Invalid invalid:
+			        onError(invalid.ValidationErrors);
+			        break;
+	        }
+        }
+        
+        public static TOutput? MatchFirst<TResult, TOutput>(this ResultOf resultOf, Func<TResult, TOutput> onSuccess, Func<Error, TOutput> onError)
+        {
+	        return resultOf switch
+	        {
+		        SuccessOf<TResult> successOf => onSuccess(successOf.Value!),
+		        ErrorOf errorOf => onError(errorOf.Errors.First()),
+		        _ => default
+	        };
+        }
+        
+        public static TOutput? Match<TResult, TOutput>(this ResultOf resultOf, Func<TResult, TOutput> onSuccess, Func<IEnumerable<Error>, TOutput> onError)
+        {
+	        return resultOf switch
+	        {
+		        SuccessOf<TResult> successOf => onSuccess(successOf.Value!),
+		        ErrorOf errorOf => onError(errorOf.Errors),
+		        _ => default
+	        };
+        }
+        
+        public static TOutput? MatchFirstValidation<TResult, TOutput>(this ResultOf resultOf, Func<TResult, TOutput> onSuccess, Func<ValidationError, TOutput> onError)
+        {
+	        return resultOf switch
+	        {
+		        SuccessOf<TResult> successOf => onSuccess(successOf.Value!),
+		        Invalid invalid => onError(invalid.ValidationErrors.First()),
+		        _ => default
+	        };
+        }
+        
+        public static TOutput? MatchValidation<TResult, TOutput>(this ResultOf resultOf, Func<TResult, TOutput> onSuccess, Func<IEnumerable<ValidationError>, TOutput> onError)
+        {
+	        return resultOf switch
+	        {
+		        SuccessOf<TResult> successOf => onSuccess(successOf.Value!),
+		        Invalid invalid => onError(invalid.ValidationErrors),
+		        _ => default
+	        };
+        }
+} 

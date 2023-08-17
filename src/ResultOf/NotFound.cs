@@ -1,15 +1,14 @@
 ﻿namespace ResultOf;
 
-[GenerateSerializer]
-public record NotFound<TValue> : ResultOf<TValue>
+public record NotFound : ErrorOf
 {
-    public NotFound() : base(ResultType.Error)
+    public NotFound() : base(ResultType.Error, Error.NotFound())
     {
-        errors.Add(Error.NotFound());
     }
     
-    public NotFound(Error error) : base(ResultType.Error)
+    public NotFound(Error error) : base(ResultType.Error, error)
     {
-        errors.Add(error);
     }
+
+    protected override Error[] NoErrors { get; } = {Error.NotFound()};
 }

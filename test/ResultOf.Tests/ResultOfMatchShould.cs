@@ -5,12 +5,13 @@ public class ResultOfMatchShould
     [Fact]
     public void MatchSuccessValue()
     {
-        ResultOf<Todo> result = new Todo("value");
+        var expected = new Todo("value");
+        ResultOf result = ResultOf.Success(expected);
         
-        var action = () => result.Match(
+        var action = () => result.Match<Todo, string>(
             onSuccess: s =>
             {
-                s.Should().Be(result.Value);
+                s.Should().Be(expected);
                 return "passed";
             },
             onError: DoNotCall);
@@ -21,13 +22,13 @@ public class ResultOfMatchShould
     [Fact]
     public void MatchErrors()
     {
-        ResultOf<Todo> result = new List<Error>
+        ResultOf result = new List<Error>
         {
             Error.Conflict(), 
             Error.Conflict()
         };
 
-        var action = () => result.Match(
+        var action = () => result.Match<Todo, string>(
             onSuccess: DoNotCall,
             onError: errors =>
             {
@@ -41,12 +42,13 @@ public class ResultOfMatchShould
     [Fact]
     public void MatchFirstSuccess()
     {
-        ResultOf<Todo> result =  new Todo("value");
+        var expected = new Todo("value");
+        ResultOf result = ResultOf.Success(expected);
 
-        var action = () => result.MatchFirst(
+        var action = () => result.MatchFirst<Todo, string>(
             onSuccess: s =>
             {
-                s.Should().Be(result.Value);
+                s.Should().Be(expected);
                 return "passed";
             },
             onError: DoNotCall);
@@ -57,9 +59,9 @@ public class ResultOfMatchShould
     [Fact]
     public void MatchFirstError()
     {
-        ResultOf<Todo> result = Error.NotFound();
+        ResultOf result = Error.NotFound();
 
-        var action = () => result.MatchFirst(
+        var action = () => result.MatchFirst<Todo, string>(
             onSuccess: DoNotCall,
             onError: error =>
             {
@@ -80,12 +82,13 @@ public class ResultOfMatchShould
     [Fact]
     public void MatchSuccessValueValidation()
     {
-        ResultOf<Todo> result = new Todo("value");
+        var expected = new Todo("value");
+        ResultOf result = ResultOf.Success(expected);
         
-        var action = () => result.MatchValidation(
+        var action = () => result.MatchValidation<Todo, string>(
             onSuccess: s =>
             {
-                s.Should().Be(result.Value);
+                s.Should().Be(expected);
                 return "passed";
             },
             onError: DoNotCall);
@@ -96,13 +99,13 @@ public class ResultOfMatchShould
     [Fact]
     public void MatchValidationErrors()
     {
-        ResultOf<Todo> result = new List<ValidationError>
+        ResultOf result = new List<ValidationError>
         {
             new("Ident", "Code", "Description", ValidationSeverity.Error),
             new("Ident", "Code", "Description", ValidationSeverity.Warning),
         };
 
-        var action = () => result.MatchValidation(
+        var action = () => result.MatchValidation<Todo, string>(
             onSuccess: DoNotCall,
             onError: errors =>
             {
@@ -116,12 +119,13 @@ public class ResultOfMatchShould
     [Fact]
     public void MatchFirstSuccessValidation()
     {
-        ResultOf<Todo> result =  new Todo("value");
+        var expected =   new Todo("value");
+        ResultOf result = ResultOf.Success(expected);
 
-        var action = () => result.MatchFirstValidation(
+        var action = () => result.MatchFirstValidation<Todo, string>(
             onSuccess: s =>
             {
-                s.Should().Be(result.Value);
+                s.Should().Be(expected);
                 return "passed";
             },
             onError: DoNotCall);
@@ -133,9 +137,9 @@ public class ResultOfMatchShould
     public void MatchFirstValidationError()
     {
         var expected = new ValidationError("Ident", "Code", "Description", ValidationSeverity.Error);
-        ResultOf<Todo> result = expected;
+        ResultOf result = expected;
 
-        var action = () => result.MatchFirstValidation(
+        var action = () => result.MatchFirstValidation<Todo, string>(
             onSuccess: DoNotCall,
             onError: error =>
             {

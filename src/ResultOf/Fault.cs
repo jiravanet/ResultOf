@@ -1,15 +1,16 @@
 ﻿namespace ResultOf;
 
-[GenerateSerializer]
-public record Fault<TValue> : ResultOf<TValue>
+public record Fault : ErrorOf
 {
-    public Fault(Error error) : base(ResultType.Error)
+
+    public Fault(Error error) : base(ResultType.Error, error)
     {
-        errors.Add(error);
     }
 
     public Fault(IEnumerable<Error> errors) : base(ResultType.Error)
     {
-        this.errors.AddRange(errors);
+        base.errors.AddRange(errors);
     }
+
+    protected override Error[] NoErrors { get; } = { Error.Custom("ResultOf.NoErrors", "No error")};
 }

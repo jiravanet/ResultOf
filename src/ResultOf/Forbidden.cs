@@ -1,15 +1,16 @@
 ﻿namespace ResultOf;
 
-[GenerateSerializer]
-public record Forbidden<TValue> : ResultOf<TValue>
+public record Forbidden : ErrorOf
 {
-    public Forbidden()  : base(ResultType.Error)
+    public Forbidden()  : base(ResultType.Error, Error.Forbidden())
     {
-        errors.Add(Error.Forbidden());
     }
     
-    public Forbidden(Error error) : base(ResultType.Error)
+    public Forbidden(Error error) : base(ResultType.Error, error)
     {
-        errors.Add(error);
     }
+
+    protected override Error[] NoErrors { get; } = {Error.Forbidden()};
+
+
 }

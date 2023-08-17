@@ -1,15 +1,15 @@
 ﻿namespace ResultOf;
 
-[GenerateSerializer]
-public record Conflict<TValue> : ResultOf<TValue>
+public record Conflict : ErrorOf
 {
-    public Conflict() : base(ResultType.Error)
+    
+    public Conflict() : base(ResultType.Error, Error.Conflict())
     {
-        errors.Add(Error.Conflict());
     }
 
-    public Conflict(Error error) : base(ResultType.Error)
+    public Conflict(Error error) : base(ResultType.Error, error)
     {
-        errors.Add(error);
     }
+
+    protected override Error[] NoErrors { get; } = {Error.Conflict()};
 }

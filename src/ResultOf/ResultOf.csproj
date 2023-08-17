@@ -2,7 +2,4 @@
     <PropertyGroup>
         <PackageId>ResultOf</PackageId>
     </PropertyGroup>
-    <ItemGroup>
-      <PackageReference Include="Microsoft.Orleans.Sdk" Version="$(Orleans)" />
-    </ItemGroup>
 </Project>

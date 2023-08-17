@@ -7,12 +7,13 @@ public class ResultOfSwitchShould
     [Fact]
     public void SwitchSuccessValue()
     {
-        ResultOf<Todo> result = new Todo("value");
+        var expected = new Todo("value");
+        ResultOf result = ResultOf.Success(expected);
         
-        var action = () => result.Switch(
+        var action = () => result.Switch<Todo>(
             onSuccess: s =>
             {
-                s.Should().Be(result.Value);
+                s.Should().Be(expected);
             },
             onError: DoNotCall);
 
@@ -22,13 +23,13 @@ public class ResultOfSwitchShould
     [Fact]
     public void SwitchErrors()
     {
-        ResultOf<Todo> result = new List<Error>
+        ResultOf result = new List<Error>
         {
             Error.Conflict(), 
             Error.Conflict()
         };
 
-        var action = () => result.Switch(
+        var action = () => result.Switch<Todo>(
             onSuccess: DoNotCall,
             onError: errors =>
             {
@@ -41,12 +42,13 @@ public class ResultOfSwitchShould
     [Fact]
     public void SwitchFirstSuccess()
     {
-        ResultOf<Todo> result =  new Todo("value");
+        var expected = new Todo("value");
+        ResultOf result = ResultOf.Success(expected);
 
-        var action = () => result.SwitchFirst(
+        var action = () => result.SwitchFirst<Todo>(
             onSuccess: s =>
             {
-                s.Should().Be(result.Value);
+                s.Should().Be(expected);
             },
             onError: DoNotCall);
 
@@ -56,9 +58,9 @@ public class ResultOfSwitchShould
     [Fact]
     public void SwitchFirstError()
     {
-        ResultOf<Todo> result = Error.NotFound();
+        ResultOf result = Error.NotFound();
 
-        var action = () => result.SwitchFirst(
+        var action = () => result.SwitchFirst<Todo>(
             onSuccess: DoNotCall,
             onError: error =>
             {
@@ -78,12 +80,13 @@ public class ResultOfSwitchShould
     [Fact]
     public void SwitchSuccessValueValidation()
     {
-        ResultOf<Todo> result = new Todo("value");
+        var expected = new Todo("value");
+        ResultOf result = ResultOf.Success(expected);
         
-        var action = () => result.SwitchValidation(
+        var action = () => result.SwitchValidation<Todo>(
             onSuccess: s =>
             {
-                s.Should().Be(result.Value);
+                s.Should().Be(expected);
             },
             onError: DoNotCall);
 
@@ -93,13 +96,13 @@ public class ResultOfSwitchShould
     [Fact]
     public void SwitchValidationErrors()
     {
-        ResultOf<Todo> result = new List<ValidationError>
+        ResultOf result = new List<ValidationError>
         {
             new("Ident", "Code", "Description", ValidationSeverity.Error),
             new("Ident", "Code", "Description", ValidationSeverity.Warning),
         };
 
-        var action = () => result.SwitchValidation(
+        var action = () => result.SwitchValidation<Todo>(
             onSuccess: DoNotCall,
             onError: errors =>
             {
@@ -112,12 +115,13 @@ public class ResultOfSwitchShould
     [Fact]
     public void SwitchFirstSuccessValidation()
     {
-        ResultOf<Todo> result =  new Todo("value");
+        var expected = new Todo("value");
+        ResultOf result = ResultOf.Success(expected);
 
-        var action = () => result.SwitchFirstValidation(
+        var action = () => result.SwitchFirstValidation<Todo>(
             onSuccess: s =>
             {
-                s.Should().Be(result.Value);
+                s.Should().Be(expected);
             },
             onError: DoNotCall);
 
@@ -128,9 +132,9 @@ public class ResultOfSwitchShould
     public void SwitchFirstValidationError()
     {
         var expected = new ValidationError("Ident", "Code", "Description", ValidationSeverity.Error);
-        ResultOf<Todo> result = expected;
+        ResultOf result = expected;
 
-        var action = () => result.SwitchFirstValidation(
+        var action = () => result.SwitchFirstValidation<Todo>(
             onSuccess: DoNotCall,
             onError: error =>
             {
